@@ -66,6 +66,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				65B36ABA2F84665A0046A689 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				65B36A9D2F8445ED0046A689 /* SnaptradePortfolioTracker */,
@@ -106,6 +107,7 @@
 			packageReferences = (
 				65B36AAC2F8460E20046A689 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				65B36AAF2F8461050046A689 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
+				65B36AB62F84663A0046A689 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 65B36A9C2F8445ED0046A689 /* Products */;
@@ -136,6 +138,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		65B36ABA2F84665A0046A689 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 65B36AB92F84665A0046A689 /* OpenAPIGenerator */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		65B36AA42F8445EF0046A689 /* Debug */ = {
@@ -373,6 +382,14 @@
 				minimumVersion = 1.2.0;
 			};
 		};
+		65B36AB62F84663A0046A689 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-generator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.11.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -385,6 +402,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 65B36AAF2F8461050046A689 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */;
 			productName = OpenAPIURLSession;
+		};
+		65B36AB92F84665A0046A689 /* OpenAPIGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65B36AB62F84663A0046A689 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
+			productName = "plugin:OpenAPIGenerator";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
