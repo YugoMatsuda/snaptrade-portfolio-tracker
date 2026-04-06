@@ -3,6 +3,7 @@ import {
   type JSONSchema,
   OpenAPIGenerator,
 } from "@orpc/openapi";
+import { stringify as toYaml } from "npm:yaml@latest";
 import { z } from "zod";
 import { router } from "../router.ts";
 
@@ -27,7 +28,15 @@ const spec = await generator.generate(router, {
   servers: [{ url: "http://localhost:8000/rpc" }],
 });
 
-const outputPath = new URL("../../contract/openapi.json", import.meta.url);
-await Deno.writeTextFile(outputPath, JSON.stringify(spec, null, 2));
+// contract/openapi.json（シングルソース）
+const jsonPath = new URL("../../contract/openapi.json", import.meta.url);
+await Deno.writeTextFile(jsonPath, JSON.stringify(spec, null, 2));
+console.log("Generated: contract/openapi.json");
 
-console.log("openapi.json generated at contract/openapi.json");
+// ios/.../openapi.yaml（自動生成物）
+const yamlPath = new URL(
+  "../../ios/SnaptradePortfolioTracker/SnaptradePortfolioTracker/openapi.yaml",
+  import.meta.url,
+);
+await Deno.writeTextFile(yamlPath, toYaml(spec));
+console.log("Generated: ios/.../openapi.yaml");

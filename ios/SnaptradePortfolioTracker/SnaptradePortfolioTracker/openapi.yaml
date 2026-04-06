@@ -1,0 +1,106 @@
+info:
+  title: SnapTrade Portfolio API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8000/rpc
+openapi: 3.1.1
+paths:
+  /holdings/getAll:
+    post:
+      operationId: holdings.getAll
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: https://json-schema.org/draft/2020-12/schema
+                type: object
+                properties:
+                  positions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        symbol:
+                          anyOf:
+                            - type: object
+                              properties:
+                                ticker:
+                                  anyOf:
+                                    - type: string
+                                    - type: "null"
+                                name:
+                                  anyOf:
+                                    - type: string
+                                    - type: "null"
+                              required:
+                                - ticker
+                                - name
+                              additionalProperties: false
+                            - type: "null"
+                        units:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                        price:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                        open_pnl:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                        average_purchase_price:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                      required:
+                        - symbol
+                        - units
+                        - price
+                        - open_pnl
+                        - average_purchase_price
+                      additionalProperties: false
+                  balances:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        currency:
+                          anyOf:
+                            - type: object
+                              properties:
+                                code:
+                                  type: string
+                              required:
+                                - code
+                              additionalProperties: false
+                            - type: "null"
+                        cash:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                        buying_power:
+                          anyOf:
+                            - type: number
+                            - type: "null"
+                      required:
+                        - currency
+                        - cash
+                        - buying_power
+                      additionalProperties: false
+                  total_value:
+                    anyOf:
+                      - type: number
+                      - type: "null"
+                  currency:
+                    anyOf:
+                      - type: string
+                      - type: "null"
+                required:
+                  - positions
+                  - balances
+                  - total_value
+                  - currency
+                additionalProperties: false
