@@ -1,0 +1,11 @@
+{
+  "name": "snaptrade-portfolio-backend",
+  "version": "0.1.0",
+  "imports": {
+    "@orpc/server": "npm:@orpc/server@latest",
+    "zod": "npm:zod@latest"
+  },
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env main.ts"
+  }
+}
