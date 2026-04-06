@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		65B36AAE2F8460E20046A689 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 65B36AAD2F8460E20046A689 /* OpenAPIRuntime */; };
+		65B36AB12F8461050046A689 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 65B36AB02F8461050046A689 /* OpenAPIURLSession */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		65B36A9B2F8445ED0046A689 /* SnaptradePortfolioTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnaptradePortfolioTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65B36AAE2F8460E20046A689 /* OpenAPIRuntime in Frameworks */,
+				65B36AB12F8461050046A689 /* OpenAPIURLSession in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = SnaptradePortfolioTracker;
 			packageProductDependencies = (
+				65B36AAD2F8460E20046A689 /* OpenAPIRuntime */,
+				65B36AB02F8461050046A689 /* OpenAPIURLSession */,
 			);
 			productName = SnaptradePortfolioTracker;
 			productReference = 65B36A9B2F8445ED0046A689 /* SnaptradePortfolioTracker.app */;
@@ -94,6 +103,10 @@
 			);
 			mainGroup = 65B36A922F8445ED0046A689;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				65B36AAC2F8460E20046A689 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
+				65B36AAF2F8461050046A689 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 65B36A9C2F8445ED0046A689 /* Products */;
 			projectDirPath = "";
@@ -342,6 +355,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		65B36AAC2F8460E20046A689 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-runtime";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.11.0;
+			};
+		};
+		65B36AAF2F8461050046A689 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-urlsession";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		65B36AAD2F8460E20046A689 /* OpenAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65B36AAC2F8460E20046A689 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
+			productName = OpenAPIRuntime;
+		};
+		65B36AB02F8461050046A689 /* OpenAPIURLSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65B36AAF2F8461050046A689 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */;
+			productName = OpenAPIURLSession;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 65B36A932F8445ED0046A689 /* Project object */;
 }
