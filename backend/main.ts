@@ -1,14 +1,14 @@
-import { RPCHandler } from "@orpc/server/fetch";
+import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { router } from "./router.ts";
 
-const handler = new RPCHandler(router);
+const handler = new OpenAPIHandler(router);
 
 Deno.serve({ port: 8000 }, async (request) => {
   const url = new URL(request.url);
 
-  if (url.pathname.startsWith("/rpc")) {
+  if (url.pathname.startsWith("/api")) {
     const { matched, response } = await handler.handle(request, {
-      prefix: "/rpc",
+      prefix: "/api",
       context: {},
     });
     if (matched) return response;

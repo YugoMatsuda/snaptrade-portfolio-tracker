@@ -14,7 +14,6 @@ paths:
           content:
             application/json:
               schema:
-                $schema: https://json-schema.org/draft/2020-12/schema
                 type: object
                 properties:
                   positions:
@@ -23,38 +22,38 @@ paths:
                       type: object
                       properties:
                         symbol:
-                          anyOf:
-                            - type: object
-                              properties:
-                                ticker:
-                                  anyOf:
-                                    - type: string
-                                    - type: "null"
-                                name:
-                                  anyOf:
-                                    - type: string
-                                    - type: "null"
-                              required:
-                                - ticker
-                                - name
-                              additionalProperties: false
-                            - type: "null"
+                          type:
+                            - object
+                            - "null"
+                          properties:
+                            ticker:
+                              type:
+                                - string
+                                - "null"
+                            name:
+                              type:
+                                - string
+                                - "null"
+                          required:
+                            - ticker
+                            - name
+                          additionalProperties: false
                         units:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                         price:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                         open_pnl:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                         average_purchase_price:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                       required:
                         - symbol
                         - units
@@ -68,36 +67,36 @@ paths:
                       type: object
                       properties:
                         currency:
-                          anyOf:
-                            - type: object
-                              properties:
-                                code:
-                                  type: string
-                              required:
-                                - code
-                              additionalProperties: false
-                            - type: "null"
+                          type:
+                            - object
+                            - "null"
+                          properties:
+                            code:
+                              type: string
+                          required:
+                            - code
+                          additionalProperties: false
                         cash:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                         buying_power:
-                          anyOf:
-                            - type: number
-                            - type: "null"
+                          type:
+                            - number
+                            - "null"
                       required:
                         - currency
                         - cash
                         - buying_power
                       additionalProperties: false
                   total_value:
-                    anyOf:
-                      - type: number
-                      - type: "null"
+                    type:
+                      - number
+                      - "null"
                   currency:
-                    anyOf:
-                      - type: string
-                      - type: "null"
+                    type:
+                      - string
+                      - "null"
                 required:
                   - positions
                   - balances
