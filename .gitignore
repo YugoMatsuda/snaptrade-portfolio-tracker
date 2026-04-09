@@ -6,5 +6,8 @@ xcuserdata/
 # Claude Code
 .claude/
 
+# Environment variables
+.env
+
 # macOS
 .DS_Store

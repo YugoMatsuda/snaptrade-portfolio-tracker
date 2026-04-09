@@ -23,11 +23,23 @@ final class HoldingsViewModel {
         transport: URLSessionTransport()
     )
 
+    // TODO: Phase 4でSupabase AuthのJWTに置き換える
+    // Phase 4実装までの仮置き（Supabase DBからuserSecretを取得する形に移行する）
+    private let userId = ""
+    private let userSecret = ""
+    private let accountId = ""
+
     func fetchHoldings() async {
         isLoading = true
         errorMessage = nil
         do {
-            let response = try await client.holdings_period_getAll(.init())
+            let response = try await client.holdings_period_getAll(.init(
+                body: .json(.init(
+                    userId: userId,
+                    userSecret: userSecret,
+                    accountId: accountId
+                ))
+            ))
             switch response {
             case .ok(let ok):
                 let body = try ok.body.json
@@ -76,7 +88,7 @@ struct ContentView: View {
             List {
                 ForEach(Array(viewModel.positions.enumerated()), id: \.offset) { _, position in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(position.symbol?.ticker ?? "-")
+                        Text(position.symbol?.symbol?.symbol ?? "-")
                             .font(.headline)
                         HStack {
                             Text("Units: \(position.units ?? 0, specifier: "%.2f")")

@@ -2,12 +2,30 @@ info:
   title: SnapTrade Portfolio API
   version: 0.1.0
 servers:
-  - url: http://localhost:8000/rpc
+  - url: http://localhost:8000/api
 openapi: 3.1.1
 paths:
   /holdings/getAll:
     post:
       operationId: holdings.getAll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                userSecret:
+                  type: string
+                accountId:
+                  type: string
+              required:
+                - userId
+                - userSecret
+                - accountId
+              additionalProperties: false
       responses:
         "200":
           description: OK
@@ -26,17 +44,25 @@ paths:
                             - object
                             - "null"
                           properties:
-                            ticker:
+                            symbol:
                               type:
-                                - string
+                                - object
                                 - "null"
-                            name:
-                              type:
-                                - string
-                                - "null"
+                              properties:
+                                symbol:
+                                  type:
+                                    - string
+                                    - "null"
+                                description:
+                                  type:
+                                    - string
+                                    - "null"
+                              required:
+                                - symbol
+                                - description
+                              additionalProperties: false
                           required:
-                            - ticker
-                            - name
+                            - symbol
                           additionalProperties: false
                         units:
                           type:
@@ -54,12 +80,23 @@ paths:
                           type:
                             - number
                             - "null"
+                        currency:
+                          type:
+                            - object
+                            - "null"
+                          properties:
+                            code:
+                              type: string
+                          required:
+                            - code
+                          additionalProperties: false
                       required:
                         - symbol
                         - units
                         - price
                         - open_pnl
                         - average_purchase_price
+                        - currency
                       additionalProperties: false
                   balances:
                     type: array

@@ -1,14 +1,27 @@
 import { z } from "zod";
 
+// Phase 4でSupabase AuthのJWTに置き換える
+// 現在はiOSからuserIdとuserSecretを直接渡す形
+export const GetHoldingsInput = z.object({
+  userId: z.string(),
+  userSecret: z.string(),
+  accountId: z.string(),
+});
+
+// SnapTrade APIの実際のレスポンス構造に合わせたスキーマ
+// positions[].symbol.symbol.symbol がティッカー文字列
 export const PositionSchema = z.object({
   symbol: z.object({
-    ticker: z.string().nullable(),
-    name: z.string().nullable(),
+    symbol: z.object({
+      symbol: z.string().nullable(),
+      description: z.string().nullable(),
+    }).nullable(),
   }).nullable(),
   units: z.number().nullable(),
   price: z.number().nullable(),
   open_pnl: z.number().nullable(),
   average_purchase_price: z.number().nullable(),
+  currency: z.object({ code: z.string() }).nullable(),
 });
 
 export const BalanceSchema = z.object({
@@ -21,5 +34,5 @@ export const GetHoldingsOutput = z.object({
   positions: z.array(PositionSchema),
   balances: z.array(BalanceSchema),
   total_value: z.number().nullable(),
-  currency: z.string().nullable(),
+  currency: z.string().nullable(),  // total_valueの通貨コード
 });
