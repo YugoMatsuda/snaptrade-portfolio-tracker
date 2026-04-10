@@ -5,6 +5,7 @@ xcuserdata/
 
 # Claude Code
 .claude/
+.mcp.json
 
 # Environment variables
 .env

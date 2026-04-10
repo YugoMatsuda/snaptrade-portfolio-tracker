@@ -1,10 +1,8 @@
 import { z } from "zod";
 
-// Phase 4でSupabase AuthのJWTに置き換える
-// 現在はiOSからuserIdとuserSecretを直接渡す形
+// userIdとuserSecretはバックエンドがSupabase DBから取得する
+// iOSからはaccountIdのみ渡す
 export const GetHoldingsInput = z.object({
-  userId: z.string(),
-  userSecret: z.string(),
   accountId: z.string(),
 });
 

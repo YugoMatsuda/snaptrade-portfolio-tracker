@@ -3,7 +3,6 @@
 
 create table public.user_secrets (
   user_id uuid primary key references auth.users(id) on delete cascade,
-  snaptrade_user_id text not null,
   snaptrade_user_secret text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

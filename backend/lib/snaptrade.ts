@@ -3,8 +3,15 @@
 // consumerKeyはこのファイル（バックエンド）のみで管理し、iOSには露出しない
 
 const BASE_URL = "https://api.snaptrade.com/api/v1";
-const CLIENT_ID = Deno.env.get("SNAPTRADE_CLIENT_ID") ?? "";
-const CONSUMER_KEY = Deno.env.get("SNAPTRADE_CONSUMER_KEY") ?? "";
+
+function requireEnv(key: string): string {
+  const value = Deno.env.get(key);
+  if (!value) throw new Error(`Missing required environment variable: ${key}`);
+  return value;
+}
+
+const CLIENT_ID = requireEnv("SNAPTRADE_CLIENT_ID");
+const CONSUMER_KEY = requireEnv("SNAPTRADE_CONSUMER_KEY");
 
 type QueryParams = [string, string][];
 
