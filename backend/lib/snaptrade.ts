@@ -22,11 +22,11 @@ async function generateSignature(
 
   // timestamp と clientId をクエリに追加してアルファベット順にソート
   // SnapTradeサーバーは全クエリパラメータを署名検証に使用する
-  const sortedParams: QueryParams = [
+  const sortedParams = ([
     ...queryParams,
-    ["clientId", CLIENT_ID],
-    ["timestamp", timestamp],
-  ].sort(([a], [b]) => a.localeCompare(b));
+    ["clientId", CLIENT_ID] as [string, string],
+    ["timestamp", timestamp] as [string, string],
+  ] as QueryParams).sort(([a], [b]) => a.localeCompare(b));
 
   const queryString = sortedParams
     .map(([k, v]) => `${k}=${v}`)
@@ -97,13 +97,13 @@ async function request<T>(
 }
 
 // GET /accounts/{accountId}/holdings
-export async function fetchHoldings(
+export async function fetchHoldings<T>(
   userId: string,
   userSecret: string,
   accountId: string,
-) {
-  return request("GET", `/accounts/${accountId}/holdings`, [
-    ["userId", userId] as [string, string],
-    ["userSecret", userSecret] as [string, string],
-  ]);
+): Promise<T> {
+  return await request<T>("GET", `/accounts/${accountId}/holdings`, [
+    ["userId", userId],
+    ["userSecret", userSecret],
+  ] as QueryParams);
 }

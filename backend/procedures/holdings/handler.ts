@@ -23,11 +23,11 @@ export const holdingsGetAll = os
   .input(GetHoldingsInput)
   .output(GetHoldingsOutput)
   .handler(async ({ input }) => {
-    const data = await fetchHoldings(
+    const data = await fetchHoldings<SnapTradeHoldingsResponse>(
       input.userId,
       input.userSecret,
       input.accountId,
-    ) as SnapTradeHoldingsResponse;
+    );
 
     return {
       positions: data.positions ?? [],
