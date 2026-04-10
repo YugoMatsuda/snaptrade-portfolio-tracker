@@ -1,6 +1,7 @@
 import { os } from "@orpc/server";
 import { GetHoldingsInput, GetHoldingsOutput } from "../../contract/holdings.ts";
 import { fetchHoldings } from "../../lib/snaptrade.ts";
+import type { AuthContext } from "../../middleware/auth.ts";
 
 type SnapTradeHoldingsResponse = {
   positions: {
@@ -20,11 +21,13 @@ type SnapTradeHoldingsResponse = {
 };
 
 export const holdingsGetAll = os
+  .$context<AuthContext>()
   .input(GetHoldingsInput)
   .output(GetHoldingsOutput)
-  .handler(async ({ input }) => {
+  .handler(async ({ input, context }) => {
+    // context.userId はSupabase AuthのユーザーID（Phase 4でDBからuserSecret取得に使う）
     const data = await fetchHoldings<SnapTradeHoldingsResponse>(
-      input.userId,
+      context.userId,
       input.userSecret,
       input.accountId,
     );
