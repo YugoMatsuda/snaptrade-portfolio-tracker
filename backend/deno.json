@@ -4,7 +4,8 @@
   "imports": {
     "@orpc/server": "npm:@orpc/server@latest",
     "@orpc/openapi": "npm:@orpc/openapi@latest",
-    "zod": "npm:zod@latest"
+    "zod": "npm:zod@latest",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@latest"
   },
   "tasks": {
     "dev": "deno run --allow-net --allow-env --env main.ts",
