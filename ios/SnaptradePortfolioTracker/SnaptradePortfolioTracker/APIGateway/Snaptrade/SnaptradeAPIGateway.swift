@@ -1,0 +1,34 @@
+// SnaptradeAPIGateway: Clientに依存し、APIを呼び出してDomainに変換して返す
+final class SnaptradeAPIGateway {
+    private let client: Client
+
+    init(client: Client) {
+        self.client = client
+    }
+
+    func connect() async throws -> String {
+        let response = try await client.snaptrade_period_connect(.init(body: .json(.init())))
+        switch response {
+        case .ok(let ok):
+            let body = try ok.body.json
+            return body.redirectURI
+        case .undocumented(let statusCode, _):
+            throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
+        }
+    }
+
+    func fetchAccounts() async throws -> [Account] {
+        let response = try await client.snaptrade_period_accounts(.init(body: .json(.init())))
+        switch response {
+        case .ok(let ok):
+            let body = try ok.body.json
+            return body.accounts.map { Account($0) }
+        case .undocumented(let statusCode, _):
+            throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
+        }
+    }
+}
+
+enum SnaptradeAPIGatewayError: Error {
+    case unexpectedStatus(Int)
+}
