@@ -103,6 +103,45 @@ async function request<T>(
   return res.json() as Promise<T>;
 }
 
+// POST /snapTrade/registerUser
+export async function registerUser(
+  userId: string,
+): Promise<{ userId: string; userSecret: string }> {
+  return await request<{ userId: string; userSecret: string }>(
+    "POST",
+    "/snapTrade/registerUser",
+    [],
+    { userId },
+  );
+}
+
+// POST /snapTrade/login - ブローカー接続ポータルURLを取得
+export async function getConnectionPortalUrl(
+  userId: string,
+  userSecret: string,
+): Promise<{ redirectURI: string }> {
+  return await request<{ redirectURI: string }>(
+    "POST",
+    "/snapTrade/login",
+    [
+      ["userId", userId],
+      ["userSecret", userSecret],
+    ],
+    { connectionType: "read" },
+  );
+}
+
+// GET /accounts - 連携済み口座一覧を取得
+export async function fetchAccounts<T>(
+  userId: string,
+  userSecret: string,
+): Promise<T> {
+  return await request<T>("GET", "/accounts", [
+    ["userId", userId],
+    ["userSecret", userSecret],
+  ]);
+}
+
 // GET /accounts/{accountId}/holdings
 export async function fetchHoldings<T>(
   userId: string,

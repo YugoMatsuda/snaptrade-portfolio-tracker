@@ -7,20 +7,16 @@ type UserSecret = {
   snaptrade_user_secret: string;
 };
 
-// DBからuserSecretを取得する
+// DBからuserSecretを取得する。未登録の場合はnullを返す
 // TODO: snaptrade_user_secret は平文保存。本来はSupabase Vault等で暗号化すべき
-export async function getUserSecret(userId: string): Promise<UserSecret> {
-  const { data, error } = await supabaseServiceRoleClient
+export async function getUserSecret(userId: string): Promise<UserSecret | null> {
+  const { data } = await supabaseServiceRoleClient
     .from("user_secrets")
     .select("snaptrade_user_secret")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
-    throw new Error("User secret not found");
-  }
-
-  return data as UserSecret;
+  return data as UserSecret | null;
 }
 
 // DBにuserSecretを保存する（初回登録時・upsert）

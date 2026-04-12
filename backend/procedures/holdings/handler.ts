@@ -26,8 +26,9 @@ export const holdingsGetAll = os
   .input(GetHoldingsInput)
   .output(GetHoldingsOutput)
   .handler(async ({ input, context }) => {
-    // Supabase DBからuserSecretを取得（iOSから受け取る必要がなくなった）
-    const { snaptrade_user_secret } = await getUserSecret(context.userId);
+    const record = await getUserSecret(context.userId);
+    if (!record) throw new Error("User secret not found");
+    const { snaptrade_user_secret } = record;
 
     const data = await fetchHoldings<SnapTradeHoldingsResponse>(
       context.userId,
