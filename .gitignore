@@ -10,5 +10,8 @@ xcuserdata/
 # Environment variables
 .env
 
+# iOS secrets
+ios/**/Secrets.swift
+
 # macOS
 .DS_Store
