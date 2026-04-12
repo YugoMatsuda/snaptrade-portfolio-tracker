@@ -52,14 +52,14 @@ async function generateSignature(
     .map(([k, v]) => `${k}=${v}`)
     .join("&");
 
-  // 署名対象のJSONを構築（iOS側と同じ構造）
+  // 署名対象のJSONを構築
   const sigObject = {
     content: body ?? null,
     path: "/api/v1" + path,
     query: queryString,
   };
 
-  // 全キーを再帰的にアルファベット順でソート（iOS側の .sortedKeys オプションと同等）
+  // 全キーを再帰的にアルファベット順でソート
   const sigString = sortedStringify(sigObject);
 
   const key = await crypto.subtle.importKey(
@@ -139,6 +139,7 @@ export async function registerUser(
 export async function getConnectionPortalUrl(
   userId: string,
   userSecret: string,
+  customRedirect: string,
 ): Promise<{ redirectURI: string }> {
   return await request<{ redirectURI: string }>(
     "POST",
@@ -147,7 +148,7 @@ export async function getConnectionPortalUrl(
       ["userId", userId],
       ["userSecret", userSecret],
     ],
-    { connectionType: "read" },
+    { connectionType: "read", customRedirect },
   );
 }
 

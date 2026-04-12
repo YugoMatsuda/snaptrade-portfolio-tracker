@@ -1,3 +1,4 @@
+import Foundation
 // SnaptradeAPIGateway: Clientに依存し、APIを呼び出してDomainに変換して返す
 final class SnaptradeAPIGateway {
     private let client: Client
@@ -29,6 +30,12 @@ final class SnaptradeAPIGateway {
     }
 }
 
-enum SnaptradeAPIGatewayError: Error {
+enum SnaptradeAPIGatewayError: LocalizedError {
     case unexpectedStatus(Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .unexpectedStatus(let code): return "Unexpected status: \(code)"
+        }
+    }
 }

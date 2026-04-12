@@ -22,6 +22,6 @@ export const snaptradeConnect = os
       userSecret = existing.snaptrade_user_secret;
     }
 
-    const { redirectURI } = await getConnectionPortalUrl(userId, userSecret);
+    const { redirectURI } = await getConnectionPortalUrl(userId, userSecret, "snaptrade://connected");
     return { redirectURI };
   });

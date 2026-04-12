@@ -7,6 +7,7 @@ final class AccountsViewModel {
     enum State {
         case idle
         case loading
+        case notConnected
         case loaded([Account])
         case error(String)
     }
@@ -26,7 +27,8 @@ final class AccountsViewModel {
             let accounts = try await gateway.fetchAccounts()
             state = .loaded(accounts)
         } catch {
-            state = .error(error.localizedDescription)
+            // SnapTrade未登録（user_secretなし）はnotConnectedとして扱う
+            state = .notConnected
         }
     }
 
@@ -36,5 +38,10 @@ final class AccountsViewModel {
         } catch {
             state = .error(error.localizedDescription)
         }
+    }
+
+    func onConnectionCompleted() async {
+        redirectURI = nil
+        await fetchAccounts()
     }
 }

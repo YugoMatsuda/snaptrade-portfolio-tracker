@@ -1,5 +1,5 @@
 import SwiftUI
-import SafariServices
+import WebKit
 
 struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
@@ -26,7 +26,9 @@ struct AccountsView: View {
                     set: { if !$0 { viewModel.redirectURI = nil } }
                 )) {
                     if let uri = viewModel.redirectURI, let url = URL(string: uri) {
-                        SafariView(url: url).ignoresSafeArea()
+                        ConnectWebView(url: url) {
+                            Task { await viewModel.onConnectionCompleted() }
+                        }
                     }
                 }
                 .task {
@@ -40,6 +42,15 @@ struct AccountsView: View {
         switch viewModel.state {
         case .idle, .loading:
             ProgressView("Loading...")
+        case .notConnected:
+            VStack(spacing: 16) {
+                Text("証券口座が連携されていません")
+                    .foregroundStyle(.secondary)
+                Button("Connect Brokerage") {
+                    Task { await viewModel.connect() }
+                }
+                .buttonStyle(.borderedProminent)
+            }
         case .error(let message):
             Text("Error: \(message)").foregroundStyle(.red)
         case .loaded(let accounts):
@@ -60,12 +71,42 @@ struct AccountsView: View {
     }
 }
 
-private struct SafariView: UIViewControllerRepresentable {
-    let url: URL
+private struct SnapTradeNavigationDecider: WebPage.NavigationDeciding {
+    let onConnected: () -> Void
 
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        SFSafariViewController(url: url)
+    mutating func decidePolicy(
+        for action: WebPage.NavigationAction,
+        preferences: inout WebPage.NavigationPreferences
+    ) async -> WKNavigationActionPolicy {
+        guard let url = action.request.url, url.scheme == "snaptrade" else {
+            return .allow
+        }
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let status = components?.queryItems?.first(where: { $0.name == "status" })?.value
+        if status == "SUCCESS" {
+            onConnected()
+        }
+        return .cancel
+    }
+}
+
+@MainActor
+private struct ConnectWebView: View {
+    let url: URL
+    let onConnected: () -> Void
+
+    @State private var page: WebPage
+
+    init(url: URL, onConnected: @escaping () -> Void) {
+        self.url = url
+        self.onConnected = onConnected
+        let decider = SnapTradeNavigationDecider(onConnected: onConnected)
+        self._page = State(initialValue: WebPage(navigationDecider: decider))
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+    var body: some View {
+        WebView(page)
+            .task { page.load(URLRequest(url: url)) }
+            .ignoresSafeArea()
+    }
 }

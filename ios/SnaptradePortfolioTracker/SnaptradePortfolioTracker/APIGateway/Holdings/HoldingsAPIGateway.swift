@@ -1,3 +1,4 @@
+import Foundation
 import OpenAPIRuntime
 // HoldingsAPIGateway: Clientに依存し、APIを呼び出してDomainに変換して返す
 final class HoldingsAPIGateway {
@@ -21,6 +22,12 @@ final class HoldingsAPIGateway {
     }
 }
 
-enum HoldingsAPIGatewayError: Error {
+enum HoldingsAPIGatewayError: LocalizedError {
     case unexpectedStatus(Int)
+
+    var errorDescription: String? {
+        switch self {
+        case .unexpectedStatus(let code): return "Unexpected status: \(code)"
+        }
+    }
 }
