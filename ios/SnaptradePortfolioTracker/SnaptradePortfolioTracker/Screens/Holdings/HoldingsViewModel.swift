@@ -1,6 +1,5 @@
 import Foundation
 import Observation
-import OpenAPIRuntime
 
 @MainActor
 @Observable
@@ -8,7 +7,7 @@ final class HoldingsViewModel {
     enum State {
         case idle
         case loading
-        case loaded(positions: [Operations.holdings_period_getAll.Output.Ok.Body.jsonPayload.positionsPayloadPayload], totalValue: Double?, currency: String?)
+        case loaded(Holdings)
         case error(String)
     }
 
@@ -16,29 +15,17 @@ final class HoldingsViewModel {
 
     // TODO: Phase 5bでaccountId選択UIを実装する
     private let accountId = ""
-    private let client: Client
+    private let service: HoldingsAPIGateway
 
-    init(client: Client) {
-        self.client = client
+    init(service: HoldingsAPIGateway) {
+        self.service = service
     }
 
     func fetchHoldings() async {
         state = .loading
         do {
-            let response = try await client.holdings_period_getAll(.init(
-                body: .json(.init(accountId: accountId))
-            ))
-            switch response {
-            case .ok(let ok):
-                let body = try ok.body.json
-                state = .loaded(
-                    positions: body.positions,
-                    totalValue: body.total_value,
-                    currency: body.currency
-                )
-            case .undocumented(let statusCode, _):
-                state = .error("Unexpected status: \(statusCode)")
-            }
+            let holdings = try await service.fetchHoldings(accountId: accountId)
+            state = .loaded(holdings)
         } catch {
             state = .error(error.localizedDescription)
         }

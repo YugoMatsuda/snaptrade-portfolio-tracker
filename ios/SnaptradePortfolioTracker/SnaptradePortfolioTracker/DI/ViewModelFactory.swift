@@ -1,5 +1,5 @@
 // ViewModelの生成を担うファクトリー
-// AuthenticatedContainerを保持し、各ViewModelにAPIクライアントを注入する
+// AuthenticatedContainerを保持し、APIGatewayを生成してViewModelに注入する
 final class ViewModelFactory {
     private let container: AuthenticatedContainer
 
@@ -8,6 +8,6 @@ final class ViewModelFactory {
     }
 
     func makeHoldingsViewModel() -> HoldingsViewModel {
-        HoldingsViewModel(client: container.apiClient)
+        HoldingsViewModel(service: HoldingsAPIGateway(client: container.apiClient))
     }
 }

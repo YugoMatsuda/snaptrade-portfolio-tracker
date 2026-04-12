@@ -12,10 +12,9 @@ struct HoldingsView: View {
             bodyContent
                 .navigationTitle("Portfolio")
                 .toolbar {
-                    if case .loaded(_, let totalValue, let currency) = viewModel.state,
-                       let total = totalValue, let currency {
+                    if case .loaded(let holdings) = viewModel.state {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Text("\(currency) \(total, specifier: "%.2f")")
+                            Text("\(holdings.currency) \(holdings.totalValue, specifier: "%.2f")")
                                 .font(.subheadline)
                                 .bold()
                         }
@@ -34,16 +33,16 @@ struct HoldingsView: View {
             ProgressView("Loading...")
         case .error(let message):
             Text("Error: \(message)").foregroundStyle(.red)
-        case .loaded(let positions, _, _):
+        case .loaded(let holdings):
             List {
-                ForEach(Array(positions.enumerated()), id: \.offset) { _, position in
+                ForEach(holdings.positions, id: \.ticker) { position in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(position.symbol?.symbol?.symbol ?? "-")
+                        Text(position.ticker)
                             .font(.headline)
                         HStack {
-                            Text("Units: \(position.units ?? 0, specifier: "%.2f")")
+                            Text("Units: \(position.units, specifier: "%.2f")")
                             Spacer()
-                            Text("$\(position.price ?? 0, specifier: "%.2f")")
+                            Text("$\(position.price, specifier: "%.2f")")
                         }
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
