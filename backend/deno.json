@@ -9,6 +9,6 @@
   },
   "tasks": {
     "dev": "deno run --allow-net --allow-env --env main.ts",
-    "gen:openapi": "deno run --allow-write --allow-read --allow-env scripts/gen_openapi.ts"
+    "gen:openapi": "SNAPTRADE_CLIENT_ID=dummy SNAPTRADE_CONSUMER_KEY=dummy SUPABASE_URL=http://dummy SUPABASE_ANON_KEY=dummy SUPABASE_SECRET_KEY=dummy deno run --allow-write --allow-read --allow-env --allow-net scripts/gen_openapi.ts"
   }
 }

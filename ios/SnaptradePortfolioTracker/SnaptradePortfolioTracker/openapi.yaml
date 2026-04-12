@@ -15,15 +15,9 @@ paths:
             schema:
               type: object
               properties:
-                userId:
-                  type: string
-                userSecret:
-                  type: string
                 accountId:
                   type: string
               required:
-                - userId
-                - userSecret
                 - accountId
               additionalProperties: false
       responses:
