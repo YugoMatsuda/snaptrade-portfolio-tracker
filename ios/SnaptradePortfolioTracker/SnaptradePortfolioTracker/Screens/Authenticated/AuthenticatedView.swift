@@ -11,7 +11,6 @@ struct AuthenticatedView: View {
     }
 
     var body: some View {
-        HoldingsView(viewModel: factory.makeHoldingsViewModel())
-        // TODO: Phase 5以降で口座一覧・パフォーマンス画面などへの遷移をここに追加
+        AccountsView(viewModel: factory.makeAccountsViewModel(), factory: factory)
     }
 }

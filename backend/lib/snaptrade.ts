@@ -15,6 +15,19 @@ const CONSUMER_KEY = requireEnv("SNAPTRADE_CONSUMER_KEY");
 
 type QueryParams = [string, string][];
 
+// Swift の JSONSerialization.data(.sortedKeys) と同等: 全キーを再帰的にアルファベット順でソートしてJSON化
+function sortedStringify(value: unknown): string {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return "[" + value.map(sortedStringify).join(",") + "]";
+  }
+  const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj).sort();
+  return "{" + keys.map((k) => `${JSON.stringify(k)}:${sortedStringify(obj[k])}`).join(",") + "}";
+}
+
 // HMAC-SHA256署名を生成する
 // SnapTradeの署名仕様:
 //   署名対象 = JSON.stringify({ content: <body|null>, path: "/api/v1" + path, query: sortedQueryString })
@@ -46,8 +59,8 @@ async function generateSignature(
     query: queryString,
   };
 
-  // JSON.stringify with sorted keys (iOS側の .sortedKeys オプションと同等)
-  const sigString = JSON.stringify(sigObject, Object.keys(sigObject).sort());
+  // 全キーを再帰的にアルファベット順でソート（iOS側の .sortedKeys オプションと同等）
+  const sigString = sortedStringify(sigObject);
 
   const key = await crypto.subtle.importKey(
     "raw",
@@ -101,6 +114,13 @@ async function request<T>(
   }
 
   return res.json() as Promise<T>;
+}
+
+// DELETE /snapTrade/deleteUser
+export async function deleteUser(userId: string): Promise<void> {
+  await request<unknown>("DELETE", "/snapTrade/deleteUser", [
+    ["userId", userId],
+  ]);
 }
 
 // POST /snapTrade/registerUser

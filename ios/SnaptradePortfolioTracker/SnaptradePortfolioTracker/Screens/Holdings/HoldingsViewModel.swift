@@ -13,12 +13,12 @@ final class HoldingsViewModel {
 
     var state: State = .idle
 
-    // TODO: Phase 5bでaccountId選択UIを実装する
-    private let accountId = ""
+    private let accountId: String
     private let service: HoldingsAPIGateway
 
-    init(service: HoldingsAPIGateway) {
+    init(service: HoldingsAPIGateway, accountId: String) {
         self.service = service
+        self.accountId = accountId
     }
 
     func fetchHoldings() async {
