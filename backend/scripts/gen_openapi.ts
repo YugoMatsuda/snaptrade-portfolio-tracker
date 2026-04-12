@@ -94,7 +94,7 @@ console.log("Generated: contract/openapi.json");
 
 // ios/.../openapi.yaml（自動生成物）
 const yamlPath = new URL(
-  "../../ios/SnaptradePortfolioTracker/SnaptradePortfolioTracker/openapi.yaml",
+  "../../ios/SnaptradePortfolioTracker/SnaptradePortfolioTracker/Resources/openapi.yaml",
   import.meta.url,
 );
 await Deno.writeTextFile(yamlPath, toYaml(spec));

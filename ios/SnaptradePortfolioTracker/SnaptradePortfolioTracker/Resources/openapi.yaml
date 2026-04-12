@@ -134,3 +134,79 @@ paths:
                   - total_value
                   - currency
                 additionalProperties: false
+  /snaptrade/connect:
+    post:
+      operationId: snaptrade.connect
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+              additionalProperties: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirectURI:
+                    type: string
+                required:
+                  - redirectURI
+                additionalProperties: false
+  /snaptrade/accounts:
+    post:
+      operationId: snaptrade.accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+              additionalProperties: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        brokerage_authorization:
+                          type:
+                            - string
+                            - "null"
+                        name:
+                          type:
+                            - string
+                            - "null"
+                        number:
+                          type:
+                            - string
+                            - "null"
+                        institution_name:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - id
+                        - brokerage_authorization
+                        - name
+                        - number
+                        - institution_name
+                      additionalProperties: false
+                required:
+                  - accounts
+                additionalProperties: false
