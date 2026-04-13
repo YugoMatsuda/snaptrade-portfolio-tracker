@@ -55,7 +55,7 @@ struct AccountsView: View {
             Text("Error: \(message)").foregroundStyle(.red)
         case .loaded(let accounts):
             List(accounts, id: \.id) { account in
-                NavigationLink(destination: HoldingsView(viewModel: factory.makeHoldingsViewModel(accountId: account.id))) {
+                NavigationLink(destination: PortfolioDetailView(viewModel: factory.makePortfolioDetailViewModel(accountId: account.id))) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(account.name ?? account.number ?? account.id)
                             .font(.headline)

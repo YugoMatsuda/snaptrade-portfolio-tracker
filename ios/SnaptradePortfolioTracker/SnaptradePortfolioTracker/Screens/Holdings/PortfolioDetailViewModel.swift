@@ -3,7 +3,7 @@ import Observation
 
 @MainActor
 @Observable
-final class HoldingsViewModel {
+final class PortfolioDetailViewModel {
     enum State {
         case idle
         case loading

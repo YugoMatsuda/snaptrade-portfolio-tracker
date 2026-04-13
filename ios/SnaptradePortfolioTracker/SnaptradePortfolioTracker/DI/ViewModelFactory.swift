@@ -11,7 +11,7 @@ final class ViewModelFactory {
         AccountsViewModel(gateway: SnaptradeAPIGateway(client: container.apiClient))
     }
 
-    func makeHoldingsViewModel(accountId: String) -> HoldingsViewModel {
-        HoldingsViewModel(service: HoldingsAPIGateway(client: container.apiClient), accountId: accountId)
+    func makePortfolioDetailViewModel(accountId: String) -> PortfolioDetailViewModel {
+        PortfolioDetailViewModel(service: HoldingsAPIGateway(client: container.apiClient), accountId: accountId)
     }
 }
