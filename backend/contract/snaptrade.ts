@@ -22,12 +22,16 @@ export const GetAccountsInput = z.object({});
 
 export const AccountSchema = z.object({
   id: z.string(),
-  brokerage_authorization: z.string().nullable(),
   name: z.string().nullable(),
   number: z.string().nullable(),
-  institution_name: z.string().nullable(),
+});
+
+export const ConnectionSchema = z.object({
+  authorizationId: z.string(),
+  institutionName: z.string().nullable(),
+  accounts: z.array(AccountSchema),
 });
 
 export const GetAccountsOutput = z.object({
-  accounts: z.array(AccountSchema),
+  connections: z.array(ConnectionSchema),
 });

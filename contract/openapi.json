@@ -262,52 +262,61 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accounts": {
+                    "connections": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "id": {
+                          "authorizationId": {
                             "type": "string"
                           },
-                          "brokerage_authorization": {
+                          "institutionName": {
                             "type": [
                               "string",
                               "null"
                             ]
                           },
-                          "name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "number": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "institution_name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                          "accounts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "number": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "number"
+                              ],
+                              "additionalProperties": false
+                            }
                           }
                         },
                         "required": [
-                          "id",
-                          "brokerage_authorization",
-                          "name",
-                          "number",
-                          "institution_name"
+                          "authorizationId",
+                          "institutionName",
+                          "accounts"
                         ],
                         "additionalProperties": false
                       }
                     }
                   },
                   "required": [
-                    "accounts"
+                    "connections"
                   ],
                   "additionalProperties": false
                 }

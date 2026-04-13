@@ -14,13 +14,22 @@ export const snaptradeAccounts = os
 
     const accounts = await getAccounts(userId);
 
+    const grouped = new Map<string, typeof accounts>();
+    for (const a of accounts) {
+      const authId = a.brokerage_authorization ?? "unknown";
+      if (!grouped.has(authId)) grouped.set(authId, []);
+      grouped.get(authId)!.push(a);
+    }
+
     return {
-      accounts: accounts.map((a) => ({
-        id: a.id,
-        brokerage_authorization: a.brokerage_authorization ?? null,
-        name: a.name ?? null,
-        number: a.number ?? null,
-        institution_name: a.institution_name ?? null,
+      connections: Array.from(grouped.entries()).map(([authId, accs]) => ({
+        authorizationId: authId,
+        institutionName: accs[0].institution_name ?? null,
+        accounts: accs.map((a) => ({
+          id: a.id,
+          name: a.name ?? null,
+          number: a.number ?? null,
+        })),
       })),
     };
   });

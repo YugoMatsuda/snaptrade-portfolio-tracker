@@ -8,7 +8,7 @@ final class AccountsViewModel {
         case idle
         case loading
         case notConnected
-        case loaded([Account])
+        case loaded([Connection])
         case error(String)
     }
 
@@ -24,8 +24,8 @@ final class AccountsViewModel {
     func fetchAccounts() async {
         state = .loading
         do {
-            let accounts = try await gateway.fetchAccounts()
-            state = .loaded(accounts)
+            let connections = try await gateway.fetchConnections()
+            state = .loaded(connections)
         } catch {
             // SnapTrade未登録（user_secretなし）はnotConnectedとして扱う
             state = .notConnected
@@ -51,9 +51,9 @@ final class AccountsViewModel {
         await fetchAccounts()
     }
 
-    func deleteConnection(authorizationId: String) async {
+    func deleteConnection(_ connection: Connection) async {
         do {
-            try await gateway.deleteConnection(authorizationId: authorizationId)
+            try await gateway.deleteConnection(authorizationId: connection.authorizationId)
             await fetchAccounts()
         } catch {
             state = .error(error.localizedDescription)

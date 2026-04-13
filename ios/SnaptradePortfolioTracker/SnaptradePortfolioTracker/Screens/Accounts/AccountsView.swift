@@ -4,7 +4,7 @@ import WebKit
 struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
     private let factory: ViewModelFactory
-    @State private var connectionToDelete: Account? = nil
+    @State private var connectionToDelete: Connection? = nil
     @State private var showDeleteUserAlert = false
 
     init(viewModel: AccountsViewModel, factory: ViewModelFactory) {
@@ -45,16 +45,15 @@ struct AccountsView: View {
                     set: { if !$0 { connectionToDelete = nil } }
                 )) {
                     Button("削除", role: .destructive) {
-                        if let account = connectionToDelete,
-                           let authId = account.brokerageAuthorization {
-                            Task { await viewModel.deleteConnection(authorizationId: authId) }
+                        if let connection = connectionToDelete {
+                            Task { await viewModel.deleteConnection(connection) }
                         }
                         connectionToDelete = nil
                     }
                     Button("キャンセル", role: .cancel) { connectionToDelete = nil }
                 } message: {
-                    if let account = connectionToDelete {
-                        Text("\(account.name ?? account.number ?? account.id) の接続を削除しますか？")
+                    if let connection = connectionToDelete {
+                        Text("\(connection.institutionName ?? connection.authorizationId) の接続を削除しますか？")
                     }
                 }
                 .alert("SnapTradeアカウントを削除", isPresented: $showDeleteUserAlert) {
@@ -87,22 +86,24 @@ struct AccountsView: View {
             }
         case .error(let message):
             Text("Error: \(message)").foregroundStyle(.red)
-        case .loaded(let accounts):
-            List(accounts, id: \.id) { account in
-                NavigationLink(destination: PortfolioDetailView(viewModel: factory.makePortfolioDetailViewModel(accountId: account.id))) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(account.name ?? account.number ?? account.id)
-                            .font(.headline)
-                        if let institution = account.institutionName {
-                            Text(institution)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+        case .loaded(let connections):
+            List {
+                ForEach(connections, id: \.authorizationId) { connection in
+                    Section {
+                        ForEach(connection.accounts, id: \.id) { account in
+                            NavigationLink(destination: PortfolioDetailView(viewModel: factory.makePortfolioDetailViewModel(accountId: account.id))) {
+                                Text(account.name ?? account.number ?? account.id)
+                            }
                         }
-                    }
-                }
-                .swipeActions(edge: .trailing) {
-                    Button("削除", role: .destructive) {
-                        connectionToDelete = account
+                    } header: {
+                        HStack {
+                            Text(connection.institutionName ?? connection.authorizationId)
+                            Spacer()
+                            Button("削除", role: .destructive) {
+                                connectionToDelete = connection
+                            }
+                            .font(.caption)
+                        }
                     }
                 }
             }

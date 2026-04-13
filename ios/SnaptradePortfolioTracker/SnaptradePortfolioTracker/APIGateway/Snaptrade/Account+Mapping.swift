@@ -1,15 +1,24 @@
 import OpenAPIRuntime
 
-typealias APIAccount = Operations.snaptrade_period_accounts.Output.Ok.Body.jsonPayload.accountsPayloadPayload
+typealias APIConnection = Operations.snaptrade_period_accounts.Output.Ok.Body.jsonPayload.connectionsPayloadPayload
+typealias APIAccount = APIConnection.accountsPayloadPayload
 
 extension Account {
     init(_ a: APIAccount) {
         self.init(
             id: a.id,
-            brokerageAuthorization: a.brokerage_authorization,
             name: a.name,
-            number: a.number,
-            institutionName: a.institution_name
+            number: a.number
+        )
+    }
+}
+
+extension Connection {
+    init(_ c: APIConnection) {
+        self.init(
+            authorizationId: c.authorizationId,
+            institutionName: c.institutionName,
+            accounts: c.accounts.map { Account($0) }
         )
     }
 }

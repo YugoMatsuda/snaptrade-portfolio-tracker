@@ -18,12 +18,12 @@ final class SnaptradeAPIGateway {
         }
     }
 
-    func fetchAccounts() async throws -> [Account] {
+    func fetchConnections() async throws -> [Connection] {
         let response = try await client.snaptrade_period_accounts(.init(body: .json(.init())))
         switch response {
         case .ok(let ok):
             let body = try ok.body.json
-            return body.accounts.map { Account($0) }
+            return body.connections.map { Connection($0) }
         case .undocumented(let statusCode, _):
             throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
         }
