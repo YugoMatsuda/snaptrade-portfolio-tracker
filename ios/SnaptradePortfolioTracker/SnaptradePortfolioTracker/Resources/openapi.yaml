@@ -234,6 +234,50 @@ paths:
                 required:
                   - syncedAccounts
                 additionalProperties: false
+  /snaptrade/deleteConnection:
+    post:
+      operationId: snaptrade.deleteConnection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                authorizationId:
+                  type: string
+              required:
+                - authorizationId
+              additionalProperties: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                additionalProperties: false
+  /snaptrade/deleteSnapTradeUser:
+    post:
+      operationId: snaptrade.deleteSnapTradeUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+              additionalProperties: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                additionalProperties: false
   /transactions/getAll:
     post:
       operationId: transactions.getAll

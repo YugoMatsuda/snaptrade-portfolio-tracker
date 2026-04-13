@@ -42,7 +42,30 @@ final class AccountsViewModel {
 
     func onConnectionCompleted() async {
         redirectURI = nil
-        try? await gateway.sync()
+        do {
+            try await gateway.sync()
+        } catch {
+            state = .error(error.localizedDescription)
+            return
+        }
         await fetchAccounts()
+    }
+
+    func deleteConnection(authorizationId: String) async {
+        do {
+            try await gateway.deleteConnection(authorizationId: authorizationId)
+            await fetchAccounts()
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
+
+    func deleteSnapTradeUser() async {
+        do {
+            try await gateway.deleteSnapTradeUser()
+            state = .notConnected
+        } catch {
+            state = .error(error.localizedDescription)
+        }
     }
 }

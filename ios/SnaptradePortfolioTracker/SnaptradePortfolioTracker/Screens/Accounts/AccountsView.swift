@@ -4,6 +4,8 @@ import WebKit
 struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
     private let factory: ViewModelFactory
+    @State private var connectionToDelete: Account? = nil
+    @State private var showDeleteUserAlert = false
 
     init(viewModel: AccountsViewModel, factory: ViewModelFactory) {
         _viewModel = State(initialValue: viewModel)
@@ -20,6 +22,13 @@ struct AccountsView: View {
                             Task { await viewModel.connect() }
                         }
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        if case .loaded = viewModel.state {
+                            Button("Delete Account", role: .destructive) {
+                                showDeleteUserAlert = true
+                            }
+                        }
+                    }
                 }
                 .sheet(isPresented: Binding(
                     get: { viewModel.redirectURI != nil },
@@ -30,6 +39,31 @@ struct AccountsView: View {
                             Task { await viewModel.onConnectionCompleted() }
                         }
                     }
+                }
+                .alert("接続を削除", isPresented: Binding(
+                    get: { connectionToDelete != nil },
+                    set: { if !$0 { connectionToDelete = nil } }
+                )) {
+                    Button("削除", role: .destructive) {
+                        if let account = connectionToDelete,
+                           let authId = account.brokerageAuthorization {
+                            Task { await viewModel.deleteConnection(authorizationId: authId) }
+                        }
+                        connectionToDelete = nil
+                    }
+                    Button("キャンセル", role: .cancel) { connectionToDelete = nil }
+                } message: {
+                    if let account = connectionToDelete {
+                        Text("\(account.name ?? account.number ?? account.id) の接続を削除しますか？")
+                    }
+                }
+                .alert("SnapTradeアカウントを削除", isPresented: $showDeleteUserAlert) {
+                    Button("削除", role: .destructive) {
+                        Task { await viewModel.deleteSnapTradeUser() }
+                    }
+                    Button("キャンセル", role: .cancel) {}
+                } message: {
+                    Text("全ての接続とデータが削除されます。この操作は取り消せません。")
                 }
                 .task {
                     await viewModel.fetchAccounts()
@@ -64,6 +98,11 @@ struct AccountsView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
+                    }
+                }
+                .swipeActions(edge: .trailing) {
+                    Button("削除", role: .destructive) {
+                        connectionToDelete = account
                     }
                 }
             }
