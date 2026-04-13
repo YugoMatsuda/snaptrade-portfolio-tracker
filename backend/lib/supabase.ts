@@ -124,3 +124,45 @@ export async function upsertTransactions(rows: TransactionRow[]): Promise<void> 
     .upsert(rows, { onConflict: "id" });
   if (error) throw new Error(`Failed to upsert transactions: ${error.message}`);
 }
+
+// --- キャッシュ読み取り ---
+
+export async function getAccounts(userId: string): Promise<AccountRow[]> {
+  const { data, error } = await supabaseServiceRoleClient
+    .from("accounts")
+    .select("*")
+    .eq("user_id", userId);
+  if (error) throw new Error(`Failed to get accounts: ${error.message}`);
+  return (data ?? []) as AccountRow[];
+}
+
+export async function getPositions(userId: string, accountId: string): Promise<PositionRow[]> {
+  const { data, error } = await supabaseServiceRoleClient
+    .from("positions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("account_id", accountId);
+  if (error) throw new Error(`Failed to get positions: ${error.message}`);
+  return (data ?? []) as PositionRow[];
+}
+
+export async function getBalances(userId: string, accountId: string): Promise<BalanceRow[]> {
+  const { data, error } = await supabaseServiceRoleClient
+    .from("balances")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("account_id", accountId);
+  if (error) throw new Error(`Failed to get balances: ${error.message}`);
+  return (data ?? []) as BalanceRow[];
+}
+
+export async function getTransactions(userId: string, accountId: string): Promise<TransactionRow[]> {
+  const { data, error } = await supabaseServiceRoleClient
+    .from("transactions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("account_id", accountId)
+    .order("trade_date", { ascending: false });
+  if (error) throw new Error(`Failed to get transactions: ${error.message}`);
+  return (data ?? []) as TransactionRow[];
+}

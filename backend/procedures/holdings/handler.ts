@@ -1,25 +1,7 @@
 import { os } from "@orpc/server";
 import { GetHoldingsInput, GetHoldingsOutput } from "../../contract/holdings.ts";
-import { fetchHoldings } from "../../lib/snaptrade.ts";
-import { getUserSecret } from "../../lib/supabase.ts";
+import { getUserSecret, getPositions, getBalances } from "../../lib/supabase.ts";
 import type { AuthContext } from "../../middleware/auth.ts";
-
-type SnapTradeHoldingsResponse = {
-  positions: {
-    symbol: { symbol: { symbol: string | null; description: string | null } | null } | null;
-    units: number | null;
-    price: number | null;
-    open_pnl: number | null;
-    average_purchase_price: number | null;
-    currency: { code: string } | null;
-  }[];
-  balances: {
-    currency: { code: string } | null;
-    cash: number | null;
-    buying_power: number | null;
-  }[];
-  total_value: { value: number; currency: string } | null;
-};
 
 export const holdingsGetAll = os
   .$context<AuthContext>()
@@ -28,18 +10,35 @@ export const holdingsGetAll = os
   .handler(async ({ input, context }) => {
     const record = await getUserSecret(context.userId);
     if (!record) throw new Error("User secret not found");
-    const { snaptrade_user_secret } = record;
 
-    const data = await fetchHoldings<SnapTradeHoldingsResponse>(
-      context.userId,
-      snaptrade_user_secret,
-      input.accountId,
-    );
+    const [positions, balances] = await Promise.all([
+      getPositions(context.userId, input.accountId),
+      getBalances(context.userId, input.accountId),
+    ]);
+
+    const totalValue = balances.reduce((sum, b) => sum + (b.cash ?? 0), 0);
+    const currency = balances[0]?.currency ?? null;
 
     return {
-      positions: data.positions ?? [],
-      balances: data.balances ?? [],
-      total_value: data.total_value?.value ?? null,
-      currency: data.total_value?.currency ?? null,
+      positions: positions.map((p) => ({
+        symbol: {
+          symbol: {
+            symbol: p.ticker,
+            description: p.name ?? null,
+          },
+        },
+        units: p.units ?? null,
+        price: p.price ?? null,
+        open_pnl: p.open_pnl ?? null,
+        average_purchase_price: p.average_purchase_price ?? null,
+        currency: p.currency ? { code: p.currency } : null,
+      })),
+      balances: balances.map((b) => ({
+        currency: { code: b.currency },
+        cash: b.cash ?? null,
+        buying_power: b.buying_power ?? null,
+      })),
+      total_value: totalValue,
+      currency,
     };
   });
