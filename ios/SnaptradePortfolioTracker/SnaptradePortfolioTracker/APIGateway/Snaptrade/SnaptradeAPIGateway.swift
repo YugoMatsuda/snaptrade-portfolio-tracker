@@ -28,6 +28,16 @@ final class SnaptradeAPIGateway {
             throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
         }
     }
+
+    func sync() async throws {
+        let response = try await client.snaptrade_period_sync(.init(body: .json(.init())))
+        switch response {
+        case .ok:
+            return
+        case .undocumented(let statusCode, _):
+            throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
+        }
+    }
 }
 
 enum SnaptradeAPIGatewayError: LocalizedError {

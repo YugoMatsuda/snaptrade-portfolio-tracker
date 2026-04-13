@@ -42,6 +42,7 @@ final class AccountsViewModel {
 
     func onConnectionCompleted() async {
         redirectURI = nil
+        try? await gateway.sync()
         await fetchAccounts()
     }
 }

@@ -317,6 +317,44 @@
         }
       }
     },
+    "/snaptrade/sync": {
+      "post": {
+        "operationId": "snaptrade.sync",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "syncedAccounts": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "syncedAccounts"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions/getAll": {
       "post": {
         "operationId": "transactions.getAll",
