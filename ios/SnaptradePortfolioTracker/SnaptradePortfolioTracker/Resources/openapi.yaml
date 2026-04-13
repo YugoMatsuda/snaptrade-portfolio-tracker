@@ -210,3 +210,84 @@ paths:
                 required:
                   - accounts
                 additionalProperties: false
+  /transactions/getAll:
+    post:
+      operationId: transactions.getAll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+              required:
+                - accountId
+              additionalProperties: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                        description:
+                          type:
+                            - string
+                            - "null"
+                        amount:
+                          type:
+                            - number
+                            - "null"
+                        currency:
+                          type:
+                            - string
+                            - "null"
+                        trade_date:
+                          type:
+                            - string
+                            - "null"
+                        ticker:
+                          type:
+                            - string
+                            - "null"
+                        units:
+                          type:
+                            - number
+                            - "null"
+                        price:
+                          type:
+                            - number
+                            - "null"
+                        fee:
+                          type:
+                            - number
+                            - "null"
+                      required:
+                        - id
+                        - type
+                        - description
+                        - amount
+                        - currency
+                        - trade_date
+                        - ticker
+                        - units
+                        - price
+                        - fee
+                      additionalProperties: false
+                required:
+                  - transactions
+                additionalProperties: false

@@ -12,6 +12,10 @@ final class ViewModelFactory {
     }
 
     func makePortfolioDetailViewModel(accountId: String) -> PortfolioDetailViewModel {
-        PortfolioDetailViewModel(service: HoldingsAPIGateway(client: container.apiClient), accountId: accountId)
+        PortfolioDetailViewModel(
+            holdingsGateway: HoldingsAPIGateway(client: container.apiClient),
+            transactionsGateway: TransactionsAPIGateway(client: container.apiClient),
+            accountId: accountId
+        )
     }
 }

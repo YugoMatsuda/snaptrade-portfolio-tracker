@@ -12,20 +12,26 @@ final class PortfolioDetailViewModel {
     }
 
     var state: State = .idle
+    var transactions: [Transaction] = []
 
     private let accountId: String
-    private let service: HoldingsAPIGateway
+    private let holdingsGateway: HoldingsAPIGateway
+    private let transactionsGateway: TransactionsAPIGateway
 
-    init(service: HoldingsAPIGateway, accountId: String) {
-        self.service = service
+    init(holdingsGateway: HoldingsAPIGateway, transactionsGateway: TransactionsAPIGateway, accountId: String) {
+        self.holdingsGateway = holdingsGateway
+        self.transactionsGateway = transactionsGateway
         self.accountId = accountId
     }
 
-    func fetchHoldings() async {
+    func fetch() async {
         state = .loading
         do {
-            let holdings = try await service.fetchHoldings(accountId: accountId)
-            state = .loaded(holdings)
+            async let holdings = holdingsGateway.fetchHoldings(accountId: accountId)
+            async let txns = transactionsGateway.fetchTransactions(accountId: accountId)
+            let h = try await holdings
+            state = .loaded(h)
+            transactions = (try? await txns) ?? []
         } catch {
             state = .error(error.localizedDescription)
         }

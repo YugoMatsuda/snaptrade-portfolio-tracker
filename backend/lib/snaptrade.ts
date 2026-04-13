@@ -163,6 +163,18 @@ export async function fetchAccounts<T>(
   ]);
 }
 
+// GET /accounts/{accountId}/activities
+export async function fetchActivities<T>(
+  userId: string,
+  userSecret: string,
+  accountId: string,
+): Promise<T> {
+  return await request<T>("GET", `/accounts/${accountId}/activities`, [
+    ["userId", userId],
+    ["userSecret", userSecret],
+  ] as QueryParams);
+}
+
 // GET /accounts/{accountId}/holdings
 export async function fetchHoldings<T>(
   userId: string,

@@ -20,7 +20,7 @@ struct PortfolioDetailView: View {
                 }
             }
             .task {
-                await viewModel.fetchHoldings()
+                await viewModel.fetch()
             }
     }
 
@@ -58,6 +58,34 @@ struct PortfolioDetailView: View {
                             }
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                if !viewModel.transactions.isEmpty {
+                    Section("Transactions") {
+                        ForEach(viewModel.transactions, id: \.id) { tx in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(tx.type ?? "-")
+                                        .font(.headline)
+                                    if let ticker = tx.ticker {
+                                        Text(ticker)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if let amount = tx.amount, let currency = tx.currency {
+                                        Text("\(currency) \(amount, specifier: "%.2f")")
+                                            .font(.subheadline)
+                                            .foregroundStyle(amount >= 0 ? .green : .red)
+                                    }
+                                }
+                                if let date = tx.tradeDate {
+                                    Text(date)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                         }
                     }
                 }
