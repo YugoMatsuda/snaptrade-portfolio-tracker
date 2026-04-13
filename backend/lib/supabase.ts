@@ -166,3 +166,33 @@ export async function getTransactions(userId: string, accountId: string): Promis
   if (error) throw new Error(`Failed to get transactions: ${error.message}`);
   return (data ?? []) as TransactionRow[];
 }
+
+// --- キャッシュ削除 ---
+
+// 特定の接続に紐づく口座（とそのcascade先）を削除
+export async function deleteAccountsByAuthorization(
+  userId: string,
+  authorizationId: string,
+): Promise<void> {
+  const { error } = await supabaseServiceRoleClient
+    .from("accounts")
+    .delete()
+    .eq("user_id", userId)
+    .eq("brokerage_authorization", authorizationId);
+  if (error) throw new Error(`Failed to delete accounts: ${error.message}`);
+}
+
+// ユーザーに紐づく全データを削除
+export async function deleteAllUserData(userId: string): Promise<void> {
+  const { error: accountsError } = await supabaseServiceRoleClient
+    .from("accounts")
+    .delete()
+    .eq("user_id", userId);
+  if (accountsError) throw new Error(`Failed to delete accounts: ${accountsError.message}`);
+
+  const { error: secretError } = await supabaseServiceRoleClient
+    .from("user_secrets")
+    .delete()
+    .eq("user_id", userId);
+  if (secretError) throw new Error(`Failed to delete user_secrets: ${secretError.message}`);
+}

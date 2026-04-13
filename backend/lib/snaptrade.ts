@@ -123,6 +123,18 @@ export async function deleteUser(userId: string): Promise<void> {
   ]);
 }
 
+// DELETE /authorizations/{authorizationId}
+export async function deleteAuthorization(
+  userId: string,
+  userSecret: string,
+  authorizationId: string,
+): Promise<void> {
+  await request<unknown>("DELETE", `/authorizations/${authorizationId}`, [
+    ["userId", userId],
+    ["userSecret", userSecret],
+  ]);
+}
+
 // POST /snapTrade/registerUser
 export async function registerUser(
   userId: string,

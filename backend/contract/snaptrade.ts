@@ -9,6 +9,14 @@ export const ConnectSnapTradeOutput = z.object({
   redirectURI: z.string(),
 });
 
+// DELETE /snaptrade/deleteConnection
+export const DeleteConnectionInput = z.object({ authorizationId: z.string() });
+export const DeleteConnectionOutput = z.object({});
+
+// DELETE /snaptrade/deleteUser
+export const DeleteUserInput = z.object({});
+export const DeleteUserOutput = z.object({});
+
 // GET /snaptrade/accounts
 export const GetAccountsInput = z.object({});
 
