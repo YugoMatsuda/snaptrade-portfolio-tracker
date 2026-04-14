@@ -1,6 +1,6 @@
 import Foundation
 import OpenAPIRuntime
-// HoldingsAPIGateway: Clientに依存し、APIを呼び出してDomainに変換して返す
+// HoldingsAPIGateway: Depends on Client, calls APIs and converts responses to Domain models
 final class HoldingsAPIGateway {
     private let client: Client
 

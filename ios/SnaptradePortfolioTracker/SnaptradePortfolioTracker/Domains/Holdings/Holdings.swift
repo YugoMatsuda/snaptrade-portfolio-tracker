@@ -1,5 +1,5 @@
-// Holdings ドメインモデル
-// APIレスポンスのoptionalを排除したクリーンなSwift型
+// Holdings domain model
+// Clean Swift types with optionals eliminated from the API response
 
 struct HoldingPosition {
     let ticker: String

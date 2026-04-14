@@ -1,7 +1,7 @@
 import SwiftUI
 
-// 認証済み画面のルート
-// ViewModelFactoryを保持し、認証後の画面遷移・ルーティングを管理する
+// Root view for authenticated users
+// Holds a ViewModelFactory and manages navigation/routing after authentication
 struct AuthenticatedView: View {
     private let factory: ViewModelFactory
 

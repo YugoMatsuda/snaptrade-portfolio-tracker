@@ -52,29 +52,29 @@ struct AccountsView: View {
                         }
                     }
                 }
-                .alert("接続を削除", isPresented: Binding(
+                .alert("Delete Connection", isPresented: Binding(
                     get: { connectionToDelete != nil },
                     set: { if !$0 { connectionToDelete = nil } }
                 )) {
-                    Button("削除", role: .destructive) {
+                    Button("Delete", role: .destructive) {
                         if let connection = connectionToDelete {
                             Task { await viewModel.deleteConnection(connection) }
                         }
                         connectionToDelete = nil
                     }
-                    Button("キャンセル", role: .cancel) { connectionToDelete = nil }
+                    Button("Cancel", role: .cancel) { connectionToDelete = nil }
                 } message: {
                     if let connection = connectionToDelete {
-                        Text("\(connection.institutionName ?? connection.authorizationId) の接続を削除しますか？")
+                        Text("Are you sure you want to delete the connection for \(connection.institutionName ?? connection.authorizationId)?")
                     }
                 }
-                .alert("SnapTradeアカウントを削除", isPresented: $showDeleteUserAlert) {
-                    Button("削除", role: .destructive) {
+                .alert("Delete SnapTrade Account", isPresented: $showDeleteUserAlert) {
+                    Button("Delete", role: .destructive) {
                         Task { await viewModel.deleteSnapTradeUser() }
                     }
-                    Button("キャンセル", role: .cancel) {}
+                    Button("Cancel", role: .cancel) {}
                 } message: {
-                    Text("全ての接続とデータが削除されます。この操作は取り消せません。")
+                    Text("All connections and data will be deleted. This action cannot be undone.")
                 }
                 .task {
                     await viewModel.fetchAccounts()
@@ -89,7 +89,7 @@ struct AccountsView: View {
             ProgressView("Loading...")
         case .notConnected:
             VStack(spacing: 16) {
-                Text("証券口座が連携されていません")
+                Text("No brokerage account linked")
                     .foregroundStyle(.secondary)
                 Button("Connect Brokerage") {
                     Task { await viewModel.connect() }
@@ -111,7 +111,7 @@ struct AccountsView: View {
                         HStack {
                             Text(connection.institutionName ?? connection.authorizationId)
                             if connection.isDisabled {
-                                Text("期限切れ")
+                                Text("Expired")
                                     .font(.caption2)
                                     .foregroundStyle(.red)
                             }
@@ -123,7 +123,7 @@ struct AccountsView: View {
                                 .font(.caption)
                                 .foregroundStyle(.orange)
                             }
-                            Button("削除", role: .destructive) {
+                            Button("Delete", role: .destructive) {
                                 connectionToDelete = connection
                             }
                             .font(.caption)

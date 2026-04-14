@@ -2,7 +2,7 @@ import Foundation
 import HTTPTypes
 import OpenAPIRuntime
 
-// JWTをAuthorizationヘッダーに付与するミドルウェア
+// Middleware that attaches a JWT to the Authorization header
 struct AuthMiddleware: ClientMiddleware {
     let token: String
 

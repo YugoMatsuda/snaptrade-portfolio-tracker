@@ -24,13 +24,13 @@ struct SnaptradePortfolioTrackerApp: App {
                 }
             }
             .task {
-                // アプリ起動時にセッションを確認（再ログイン不要にする）
+                // Check session on app launch (to avoid requiring re-login)
                 if let session = try? await supabase.auth.session {
                     authState = .authenticated(jwt: session.accessToken)
                 } else {
                     authState = .unauthenticated
                 }
-                // ログイン/ログアウトのイベントを監視
+                // Observe sign-in / sign-out events
                 for await (event, session) in supabase.auth.authStateChanges {
                     switch event {
                     case .signedIn:

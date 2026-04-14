@@ -28,7 +28,7 @@ final class AccountsViewModel {
             let connections = try await gateway.fetchConnections()
             state = .loaded(connections)
         } catch {
-            // SnapTrade未登録（user_secretなし）はnotConnectedとして扱う
+            // Not registered with SnapTrade (no user_secret) — treat as notConnected
             state = .notConnected
         }
     }

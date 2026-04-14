@@ -1,5 +1,5 @@
-// ViewModelの生成を担うファクトリー
-// AuthenticatedContainerを保持し、APIGatewayを生成してViewModelに注入する
+// Factory responsible for creating ViewModels
+// Holds an AuthenticatedContainer and injects APIGateway instances into each ViewModel
 final class ViewModelFactory {
     private let container: AuthenticatedContainer
 

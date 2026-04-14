@@ -1,5 +1,5 @@
 import Foundation
-// SnaptradeAPIGateway: Clientに依存し、APIを呼び出してDomainに変換して返す
+// SnaptradeAPIGateway: Depends on Client, calls APIs and converts responses to Domain models
 final class SnaptradeAPIGateway {
     private let client: Client
 

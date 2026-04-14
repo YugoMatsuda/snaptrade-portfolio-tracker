@@ -1,7 +1,7 @@
 import OpenAPIRuntime
 
-// APIレスポンス → Holdingsドメインへの変換
-// Domain型はOpenAPIに依存しないよう、マッピングはService層のextensionで行う
+// Mapping from API response → Holdings domain
+// Mapping is done in a Service-layer extension so Domain types remain independent of OpenAPI
 
 typealias APIResponse = Operations.holdings_period_getAll.Output.Ok.Body.jsonPayload
 

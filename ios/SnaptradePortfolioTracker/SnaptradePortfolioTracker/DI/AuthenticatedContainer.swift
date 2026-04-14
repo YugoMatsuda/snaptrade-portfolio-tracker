@@ -1,8 +1,8 @@
 import Foundation
 import OpenAPIURLSession
 
-// 認証済みユーザーの依存関係を管理するコンテナ
-// JWTをもとにAPIクライアントなどを初期化し、各ViewModelに注入する
+// Container that manages dependencies for an authenticated user
+// Initializes the API client and other dependencies from a JWT, then injects them into each ViewModel
 final class AuthenticatedContainer {
     let apiClient: Client
 
