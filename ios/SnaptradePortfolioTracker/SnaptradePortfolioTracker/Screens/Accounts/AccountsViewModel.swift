@@ -14,6 +14,7 @@ final class AccountsViewModel {
 
     var state: State = .idle
     var redirectURI: String? = nil
+    var isSyncing: Bool = false
 
     private let gateway: SnaptradeAPIGateway
 
@@ -42,6 +43,18 @@ final class AccountsViewModel {
 
     func onConnectionCompleted() async {
         redirectURI = nil
+        do {
+            try await gateway.sync()
+        } catch {
+            state = .error(error.localizedDescription)
+            return
+        }
+        await fetchAccounts()
+    }
+
+    func manualSync() async {
+        isSyncing = true
+        defer { isSyncing = false }
         do {
             try await gateway.sync()
         } catch {

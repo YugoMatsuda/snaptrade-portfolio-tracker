@@ -18,8 +18,20 @@ struct AccountsView: View {
                 .navigationTitle("Accounts")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Connect") {
-                            Task { await viewModel.connect() }
+                        if viewModel.isSyncing {
+                            ProgressView()
+                        } else {
+                            Button("Connect") {
+                                Task { await viewModel.connect() }
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if case .loaded = viewModel.state {
+                            Button("Sync") {
+                                Task { await viewModel.manualSync() }
+                            }
+                            .disabled(viewModel.isSyncing)
                         }
                     }
                     ToolbarItem(placement: .topBarLeading) {
