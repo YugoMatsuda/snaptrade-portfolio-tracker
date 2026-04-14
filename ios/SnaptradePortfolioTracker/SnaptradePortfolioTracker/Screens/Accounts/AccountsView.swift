@@ -98,7 +98,19 @@ struct AccountsView: View {
                     } header: {
                         HStack {
                             Text(connection.institutionName ?? connection.authorizationId)
+                            if connection.isDisabled {
+                                Text("期限切れ")
+                                    .font(.caption2)
+                                    .foregroundStyle(.red)
+                            }
                             Spacer()
+                            if connection.isDisabled {
+                                Button("Reconnect") {
+                                    Task { await viewModel.reconnect(connection) }
+                                }
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                            }
                             Button("削除", role: .destructive) {
                                 connectionToDelete = connection
                             }

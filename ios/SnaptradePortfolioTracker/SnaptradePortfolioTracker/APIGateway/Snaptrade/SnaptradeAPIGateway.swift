@@ -39,6 +39,18 @@ final class SnaptradeAPIGateway {
         }
     }
 
+    func reconnect(authorizationId: String) async throws -> String {
+        let response = try await client.snaptrade_period_reconnect(
+            .init(body: .json(.init(authorizationId: authorizationId)))
+        )
+        switch response {
+        case .ok(let ok):
+            return try ok.body.json.redirectURI
+        case .undocumented(let statusCode, _):
+            throw SnaptradeAPIGatewayError.unexpectedStatus(statusCode)
+        }
+    }
+
     func deleteConnection(authorizationId: String) async throws {
         let response = try await client.snaptrade_period_deleteConnection(
             .init(body: .json(.init(authorizationId: authorizationId)))

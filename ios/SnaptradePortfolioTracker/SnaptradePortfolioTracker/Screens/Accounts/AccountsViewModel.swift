@@ -51,6 +51,14 @@ final class AccountsViewModel {
         await fetchAccounts()
     }
 
+    func reconnect(_ connection: Connection) async {
+        do {
+            redirectURI = try await gateway.reconnect(authorizationId: connection.authorizationId)
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
+
     func deleteConnection(_ connection: Connection) async {
         do {
             try await gateway.deleteConnection(authorizationId: connection.authorizationId)

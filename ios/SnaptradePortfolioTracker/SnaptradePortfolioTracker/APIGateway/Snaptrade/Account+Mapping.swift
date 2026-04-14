@@ -18,6 +18,7 @@ extension Connection {
         self.init(
             authorizationId: c.authorizationId,
             institutionName: c.institutionName,
+            isDisabled: c.isDisabled,
             accounts: c.accounts.map { Account($0) }
         )
     }
