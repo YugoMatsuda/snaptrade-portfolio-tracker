@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-// userIdとuserSecretはバックエンドがSupabase DBから取得する
-// iOSからはaccountIdのみ渡す
+// userId and userSecret are retrieved by the backend from the Supabase DB
+// Only accountId is passed from iOS
 export const GetHoldingsInput = z.object({
   accountId: z.string(),
 });
 
-// SnapTrade APIの実際のレスポンス構造に合わせたスキーマ
-// positions[].symbol.symbol.symbol がティッカー文字列
+// Schema aligned with the actual response structure of the SnapTrade API
+// positions[].symbol.symbol.symbol is the ticker string
 export const PositionSchema = z.object({
   symbol: z.object({
     symbol: z.object({
@@ -32,5 +32,5 @@ export const GetHoldingsOutput = z.object({
   positions: z.array(PositionSchema),
   balances: z.array(BalanceSchema),
   total_value: z.number().nullable(),
-  currency: z.string().nullable(),  // total_valueの通貨コード
+  currency: z.string().nullable(),  // currency code for total_value
 });

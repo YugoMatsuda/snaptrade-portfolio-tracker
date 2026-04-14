@@ -9,29 +9,29 @@ import { router } from "../router.ts";
 
 type SchemaObject = Record<string, unknown>;
 
-// Zod v4のz.toJSONSchema()はJSON Schema Draft 2020-12形式で出力するため、
-// ルートに "$schema": "https://json-schema.org/draft/2020-12/schema" が付与される。
-// このフィールドはOpenAPI 3.1スキーマとして不正であり、
-// swift-openapi-generatorがスキーマ全体を無視する原因になるため除去する。
+// Zod v4's z.toJSONSchema() outputs in JSON Schema Draft 2020-12 format,
+// which adds "$schema": "https://json-schema.org/draft/2020-12/schema" at the root.
+// This field is invalid as an OpenAPI 3.1 schema and causes swift-openapi-generator
+// to ignore the entire schema, so it must be stripped.
 function stripZodMeta({ $schema: _, ...rest }: SchemaObject): SchemaObject {
   return rest;
 }
 
-// Zod v4のz.toJSONSchema()はnullableフィールドを
+// Zod v4's z.toJSONSchema() outputs nullable fields as:
 //   anyOf: [{ type: "string" }, { type: "null" }]
-// という形式で出力する（JSON Schema標準に準拠）。
+// which conforms to the JSON Schema standard.
 //
-// しかしswift-openapi-generatorはこのパターンを2026年4月時点でサポートしておらず、
-// "The anyOf structure did not decode into any child schema" というエラーになる。
-// 関連Issue:
+// However, as of April 2026, swift-openapi-generator does not support this pattern
+// and throws "The anyOf structure did not decode into any child schema".
+// Related issues:
 //   https://github.com/apple/swift-openapi-generator/issues/82
 //   https://github.com/apple/swift-openapi-generator/issues/286
 //   https://github.com/apple/swift-openapi-generator/issues/534
 //
-// 対策として、OpenAPI 3.1が正式サポートする type配列記法
+// As a workaround, convert to the type array notation officially supported by OpenAPI 3.1:
 //   type: ["string", "null"]
-// に変換する。この変換はswift-openapi-generatorの公式workaroundとして認知されている。
-// swift-openapi-generatorが anyOf nullable をサポートした際はこの関数を削除できる。
+// This conversion is a known official workaround for swift-openapi-generator.
+// This function can be removed once swift-openapi-generator supports anyOf nullable.
 function normalizeNullable(schema: SchemaObject): SchemaObject {
   if (Array.isArray(schema.anyOf)) {
     const anyOf = schema.anyOf as SchemaObject[];
@@ -48,7 +48,7 @@ function normalizeNullable(schema: SchemaObject): SchemaObject {
       };
     }
   }
-  // properties を再帰的に処理
+  // Recursively process properties
   if (schema.properties && typeof schema.properties === "object") {
     const props = schema.properties as Record<string, SchemaObject>;
     return {
@@ -58,7 +58,7 @@ function normalizeNullable(schema: SchemaObject): SchemaObject {
       ),
     };
   }
-  // items を再帰的に処理
+  // Recursively process items
   if (schema.items && typeof schema.items === "object") {
     return { ...schema, items: normalizeNullable(schema.items as SchemaObject) };
   }
@@ -87,12 +87,12 @@ const spec = await generator.generate(router, {
   servers: [{ url: "http://localhost:8000/api" }],
 });
 
-// contract/openapi.json（シングルソース）
+// contract/openapi.json (single source of truth)
 const jsonPath = new URL("../../contract/openapi.json", import.meta.url);
 await Deno.writeTextFile(jsonPath, JSON.stringify(spec, null, 2));
 console.log("Generated: contract/openapi.json");
 
-// ios/.../openapi.yaml（自動生成物）
+// ios/.../openapi.yaml (auto-generated artifact)
 const yamlPath = new URL(
   "../../ios/SnaptradePortfolioTracker/SnaptradePortfolioTracker/Resources/openapi.yaml",
   import.meta.url,

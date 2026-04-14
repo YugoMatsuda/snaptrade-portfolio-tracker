@@ -1,5 +1,5 @@
-// Supabase AuthのJWTを検証するミドルウェア
-// iOSから Authorization: Bearer <JWT> ヘッダーで受け取る
+// Middleware that verifies the Supabase Auth JWT
+// Received from iOS via the Authorization: Bearer <JWT> header
 
 import { supabaseAnonRoleClient } from "../lib/supabaseClient.ts";
 
@@ -15,7 +15,7 @@ export async function getAuthContext(request: Request): Promise<AuthContext> {
 
   const jwt = authHeader.slice("Bearer ".length);
 
-  // JWTをSupabase SDKに渡してユーザー情報を取得
+  // Pass the JWT to the Supabase SDK to retrieve user information
   const { data: { user }, error } = await supabaseAnonRoleClient.auth.getUser(jwt);
 
   if (error || !user) {

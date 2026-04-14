@@ -1,5 +1,5 @@
-// Supabase DBクライアント
-// Secret keyを使用してRLSをバイパスし、任意のユーザーのデータにアクセスする
+// Supabase DB client
+// Uses the secret key to bypass RLS and access data for any user
 
 import { supabaseServiceRoleClient } from "./supabaseClient.ts";
 
@@ -7,8 +7,8 @@ type UserSecret = {
   snaptrade_user_secret: string;
 };
 
-// DBからuserSecretを取得する。未登録の場合はnullを返す
-// TODO: snaptrade_user_secret は平文保存。本来はSupabase Vault等で暗号化すべき
+// Retrieves the userSecret from the DB. Returns null if the user is not registered.
+// TODO: snaptrade_user_secret is stored in plaintext. Should be encrypted using Supabase Vault or similar.
 export async function getUserSecret(userId: string): Promise<UserSecret | null> {
   const { data } = await supabaseServiceRoleClient
     .from("user_secrets")
@@ -19,8 +19,8 @@ export async function getUserSecret(userId: string): Promise<UserSecret | null> 
   return data as UserSecret | null;
 }
 
-// DBにuserSecretを保存する（初回登録時・upsert）
-// TODO: snaptrade_user_secret は平文保存。本来はSupabase Vault等で暗号化すべき
+// Saves the userSecret to the DB (on first registration, via upsert)
+// TODO: snaptrade_user_secret is stored in plaintext. Should be encrypted using Supabase Vault or similar.
 export async function saveUserSecret(
   userId: string,
   snaptradeUserSecret: string,
@@ -37,7 +37,7 @@ export async function saveUserSecret(
   }
 }
 
-// --- キャッシュ書き込み ---
+// --- Cache Writes ---
 
 type AccountRow = {
   id: string;
@@ -90,7 +90,7 @@ export async function upsertAccounts(rows: AccountRow[]): Promise<void> {
   if (error) throw new Error(`Failed to upsert accounts: ${error.message}`);
 }
 
-// positionsはスナップショットなので対象accountのデータを全削除後に再挿入
+// positions is a snapshot, so delete all data for the target account before re-inserting
 export async function replacePositions(accountId: string, rows: PositionRow[]): Promise<void> {
   const { error: delError } = await supabaseServiceRoleClient
     .from("positions")
@@ -103,7 +103,7 @@ export async function replacePositions(accountId: string, rows: PositionRow[]): 
   if (error) throw new Error(`Failed to insert positions: ${error.message}`);
 }
 
-// balancesも同様にスナップショット
+// balances is also a snapshot, same approach
 export async function replaceBalances(accountId: string, rows: BalanceRow[]): Promise<void> {
   const { error: delError } = await supabaseServiceRoleClient
     .from("balances")
@@ -116,7 +116,7 @@ export async function replaceBalances(accountId: string, rows: BalanceRow[]): Pr
   if (error) throw new Error(`Failed to insert balances: ${error.message}`);
 }
 
-// transactionsはIDベースのupsert（冪等）
+// transactions uses ID-based upsert (idempotent)
 export async function upsertTransactions(rows: TransactionRow[]): Promise<void> {
   if (rows.length === 0) return;
   const { error } = await supabaseServiceRoleClient
@@ -125,7 +125,7 @@ export async function upsertTransactions(rows: TransactionRow[]): Promise<void> 
   if (error) throw new Error(`Failed to upsert transactions: ${error.message}`);
 }
 
-// --- キャッシュ読み取り ---
+// --- Cache Reads ---
 
 export async function getAccounts(userId: string): Promise<AccountRow[]> {
   const { data, error } = await supabaseServiceRoleClient
@@ -193,9 +193,9 @@ export async function getAuthorizations(userId: string): Promise<AuthorizationRo
   return (data ?? []) as AuthorizationRow[];
 }
 
-// --- キャッシュ削除 ---
+// --- Cache Deletes ---
 
-// 特定の接続に紐づく口座（とそのcascade先）を削除
+// Deletes accounts (and their cascade targets) associated with a specific connection
 export async function deleteAccountsByAuthorization(
   userId: string,
   authorizationId: string,
@@ -208,7 +208,7 @@ export async function deleteAccountsByAuthorization(
   if (error) throw new Error(`Failed to delete accounts: ${error.message}`);
 }
 
-// ユーザーに紐づく全データを削除
+// Deletes all data associated with a user
 export async function deleteAllUserData(userId: string): Promise<void> {
   const { error: accountsError } = await supabaseServiceRoleClient
     .from("accounts")

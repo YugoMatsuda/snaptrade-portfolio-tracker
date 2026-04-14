@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 // POST /snaptrade/connect
-// SnapTrade未登録なら registerUser → 登録済みならスキップ
-// ブローカー接続ポータルURLを返す
+// If not yet registered with SnapTrade, calls registerUser; otherwise skips registration
+// Returns the broker connection portal URL
 export const ConnectSnapTradeInput = z.object({});
 
 export const ConnectSnapTradeOutput = z.object({

@@ -11,7 +11,7 @@ export const snaptradeConnect = os
   .handler(async ({ context }) => {
     const { userId } = context;
 
-    // 未登録なら registerUser してシークレットを保存
+    // If not yet registered, call registerUser and save the secret
     const existing = await getUserSecret(userId);
     let userSecret: string;
     if (existing === null) {

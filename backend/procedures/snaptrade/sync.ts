@@ -56,7 +56,7 @@ export const snaptradeSync = os
     if (!record) throw new Error("User secret not found");
     const { snaptrade_user_secret } = record;
 
-    // 1. 認可一覧を取得してキャッシュ
+    // 1. Fetch the list of authorizations and cache them
     const authorizations = await fetchAuthorizations(userId, snaptrade_user_secret);
     await upsertAuthorizations(authorizations.map((a) => ({
       authorization_id: a.id,
@@ -65,7 +65,7 @@ export const snaptradeSync = os
       disabled_date: a.disabled_date ?? null,
     })));
 
-    // 2. 口座一覧を取得してキャッシュ
+    // 2. Fetch the list of accounts and cache them
     const accounts = await fetchAccounts<SnapTradeAccount[]>(userId, snaptrade_user_secret);
     await upsertAccounts(accounts.map((a) => ({
       id: a.id,
@@ -76,7 +76,7 @@ export const snaptradeSync = os
       institution_name: a.institution_name ?? null,
     })));
 
-    // 3. 各口座の holdings + transactions を並行取得してキャッシュ
+    // 3. Fetch holdings + transactions for each account in parallel and cache them
     await Promise.all(accounts.map(async (account) => {
       const [holdings, activitiesRes] = await Promise.all([
         fetchHoldings<SnapTradeHoldings>(userId, snaptrade_user_secret, account.id),

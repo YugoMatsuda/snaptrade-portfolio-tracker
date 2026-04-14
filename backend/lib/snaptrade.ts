@@ -1,6 +1,6 @@
-// SnapTrade APIクライアント
-// HMAC-SHA256署名ロジックはiOS SnapTradeAPI.swiftから移植
-// consumerKeyはこのファイル（バックエンド）のみで管理し、iOSには露出しない
+// SnapTrade API client
+// HMAC-SHA256 signing logic ported from iOS SnapTradeAPI.swift
+// consumerKey is managed only in this file (backend) and is never exposed to iOS
 
 const BASE_URL = "https://api.snaptrade.com/api/v1";
 
@@ -15,7 +15,7 @@ const CONSUMER_KEY = requireEnv("SNAPTRADE_CONSUMER_KEY");
 
 type QueryParams = [string, string][];
 
-// Swift の JSONSerialization.data(.sortedKeys) と同等: 全キーを再帰的にアルファベット順でソートしてJSON化
+// Equivalent to Swift's JSONSerialization.data(.sortedKeys): recursively sorts all keys alphabetically and serializes to JSON
 function sortedStringify(value: unknown): string {
   if (value === null || typeof value !== "object") {
     return JSON.stringify(value);
@@ -28,11 +28,11 @@ function sortedStringify(value: unknown): string {
   return "{" + keys.map((k) => `${JSON.stringify(k)}:${sortedStringify(obj[k])}`).join(",") + "}";
 }
 
-// HMAC-SHA256署名を生成する
-// SnapTradeの署名仕様:
-//   署名対象 = JSON.stringify({ content: <body|null>, path: "/api/v1" + path, query: sortedQueryString })
-//   ※ キーはアルファベット順（sortedKeys）
-//   ※ クエリパラメータも署名前にアルファベット順にソートする
+// Generates an HMAC-SHA256 signature
+// SnapTrade signing specification:
+//   Signing target = JSON.stringify({ content: <body|null>, path: "/api/v1" + path, query: sortedQueryString })
+//   * Keys must be in alphabetical order (sortedKeys)
+//   * Query parameters must also be sorted alphabetically before signing
 async function generateSignature(
   path: string,
   queryParams: QueryParams,
@@ -40,8 +40,8 @@ async function generateSignature(
 ): Promise<{ signature: string; timestamp: string; sortedParams: QueryParams }> {
   const timestamp = String(Math.floor(Date.now() / 1000));
 
-  // timestamp と clientId をクエリに追加してアルファベット順にソート
-  // SnapTradeサーバーは全クエリパラメータを署名検証に使用する
+  // Append timestamp and clientId to the query params and sort alphabetically
+  // The SnapTrade server uses all query parameters for signature verification
   const sortedParams = ([
     ...queryParams,
     ["clientId", CLIENT_ID] as [string, string],
@@ -52,14 +52,14 @@ async function generateSignature(
     .map(([k, v]) => `${k}=${v}`)
     .join("&");
 
-  // 署名対象のJSONを構築
+  // Build the JSON object to be signed
   const sigObject = {
     content: body ?? null,
     path: "/api/v1" + path,
     query: queryString,
   };
 
-  // 全キーを再帰的にアルファベット順でソート
+  // Recursively sort all keys in alphabetical order
   const sigString = sortedStringify(sigObject);
 
   const key = await crypto.subtle.importKey(
@@ -79,7 +79,7 @@ async function generateSignature(
   return { signature, timestamp, sortedParams };
 }
 
-// SnapTrade APIへのリクエストを送信する
+// Sends a request to the SnapTrade API
 async function request<T>(
   method: "GET" | "POST" | "DELETE",
   path: string,
@@ -147,7 +147,7 @@ export async function registerUser(
   );
 }
 
-// POST /snapTrade/login - ブローカー接続ポータルURLを取得
+// POST /snapTrade/login - Retrieves the broker connection portal URL
 export async function getConnectionPortalUrl(
   userId: string,
   userSecret: string,
@@ -164,7 +164,7 @@ export async function getConnectionPortalUrl(
   );
 }
 
-// GET /accounts - 連携済み口座一覧を取得
+// GET /accounts - Retrieves the list of linked brokerage accounts
 export async function fetchAccounts<T>(
   userId: string,
   userSecret: string,
@@ -187,7 +187,7 @@ export async function fetchActivities<T>(
   ] as QueryParams);
 }
 
-// GET /authorizations - 接続一覧と無効化ステータスを取得
+// GET /authorizations - Retrieves the list of connections and their disabled status
 type SnapTradeAuthorization = {
   id: string;
   disabled: boolean | null;
@@ -204,7 +204,7 @@ export async function fetchAuthorizations(
   ]);
 }
 
-// POST /snapTrade/login (reconnect) - 既存接続の再認証ポータルURLを取得
+// POST /snapTrade/login (reconnect) - Retrieves the re-authentication portal URL for an existing connection
 export async function getReconnectPortalUrl(
   userId: string,
   userSecret: string,
