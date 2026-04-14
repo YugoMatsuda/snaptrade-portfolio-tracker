@@ -9,6 +9,10 @@ export const ConnectSnapTradeOutput = z.object({
   redirectURI: z.string(),
 });
 
+// POST /snaptrade/reconnect
+export const ReconnectSnapTradeInput = z.object({ authorizationId: z.string() });
+export const ReconnectSnapTradeOutput = z.object({ redirectURI: z.string() });
+
 // DELETE /snaptrade/deleteConnection
 export const DeleteConnectionInput = z.object({ authorizationId: z.string() });
 export const DeleteConnectionOutput = z.object({});
@@ -29,6 +33,7 @@ export const AccountSchema = z.object({
 export const ConnectionSchema = z.object({
   authorizationId: z.string(),
   institutionName: z.string().nullable(),
+  isDisabled: z.boolean(),
   accounts: z.array(AccountSchema),
 });
 

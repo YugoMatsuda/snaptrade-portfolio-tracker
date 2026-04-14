@@ -1,7 +1,7 @@
 import { os } from "@orpc/server";
 import { SyncInput, SyncOutput } from "../../contract/sync.ts";
-import { fetchAccounts, fetchHoldings, fetchActivities } from "../../lib/snaptrade.ts";
-import { getUserSecret, upsertAccounts, replacePositions, replaceBalances, upsertTransactions } from "../../lib/supabase.ts";
+import { fetchAccounts, fetchHoldings, fetchActivities, fetchAuthorizations } from "../../lib/snaptrade.ts";
+import { getUserSecret, upsertAccounts, upsertAuthorizations, replacePositions, replaceBalances, upsertTransactions } from "../../lib/supabase.ts";
 import type { AuthContext } from "../../middleware/auth.ts";
 
 type SnapTradeAccount = {
@@ -56,7 +56,16 @@ export const snaptradeSync = os
     if (!record) throw new Error("User secret not found");
     const { snaptrade_user_secret } = record;
 
-    // 1. 口座一覧を取得してキャッシュ
+    // 1. 認可一覧を取得してキャッシュ
+    const authorizations = await fetchAuthorizations(userId, snaptrade_user_secret);
+    await upsertAuthorizations(authorizations.map((a) => ({
+      authorization_id: a.id,
+      user_id: userId,
+      is_disabled: a.disabled ?? false,
+      disabled_date: a.disabled_date ?? null,
+    })));
+
+    // 2. 口座一覧を取得してキャッシュ
     const accounts = await fetchAccounts<SnapTradeAccount[]>(userId, snaptrade_user_secret);
     await upsertAccounts(accounts.map((a) => ({
       id: a.id,
@@ -67,7 +76,7 @@ export const snaptradeSync = os
       institution_name: a.institution_name ?? null,
     })));
 
-    // 2. 各口座の holdings + transactions を並行取得してキャッシュ
+    // 3. 各口座の holdings + transactions を並行取得してキャッシュ
     await Promise.all(accounts.map(async (account) => {
       const [holdings, activitiesRes] = await Promise.all([
         fetchHoldings<SnapTradeHoldings>(userId, snaptrade_user_secret, account.id),
@@ -103,7 +112,7 @@ export const snaptradeSync = os
       await replaceBalances(account.id, balances);
 
       // transactions
-      const transactions = activitiesRes.data.map((a) => ({
+      const transactions = (activitiesRes.data ?? []).map((a) => ({
         id: a.id,
         account_id: account.id,
         user_id: userId,

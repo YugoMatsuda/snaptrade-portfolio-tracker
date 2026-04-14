@@ -276,6 +276,9 @@
                               "null"
                             ]
                           },
+                          "isDisabled": {
+                            "type": "boolean"
+                          },
                           "accounts": {
                             "type": "array",
                             "items": {
@@ -309,6 +312,7 @@
                         "required": [
                           "authorizationId",
                           "institutionName",
+                          "isDisabled",
                           "accounts"
                         ],
                         "additionalProperties": false
@@ -425,6 +429,51 @@
                 "schema": {
                   "type": "object",
                   "properties": {},
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/snaptrade/reconnect": {
+      "post": {
+        "operationId": "snaptrade.reconnect",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorizationId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "authorizationId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirectURI": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "redirectURI"
+                  ],
                   "additionalProperties": false
                 }
               }

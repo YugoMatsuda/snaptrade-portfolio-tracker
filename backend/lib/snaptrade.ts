@@ -187,6 +187,41 @@ export async function fetchActivities<T>(
   ] as QueryParams);
 }
 
+// GET /authorizations - 接続一覧と無効化ステータスを取得
+type SnapTradeAuthorization = {
+  id: string;
+  disabled: boolean | null;
+  disabled_date: string | null;
+};
+
+export async function fetchAuthorizations(
+  userId: string,
+  userSecret: string,
+): Promise<SnapTradeAuthorization[]> {
+  return await request<SnapTradeAuthorization[]>("GET", "/authorizations", [
+    ["userId", userId],
+    ["userSecret", userSecret],
+  ]);
+}
+
+// POST /snapTrade/login (reconnect) - 既存接続の再認証ポータルURLを取得
+export async function getReconnectPortalUrl(
+  userId: string,
+  userSecret: string,
+  authorizationId: string,
+  customRedirect: string,
+): Promise<{ redirectURI: string }> {
+  return await request<{ redirectURI: string }>(
+    "POST",
+    "/snapTrade/login",
+    [
+      ["userId", userId],
+      ["userSecret", userSecret],
+    ],
+    { connectionType: "read", customRedirect, reconnect: authorizationId },
+  );
+}
+
 // GET /accounts/{accountId}/holdings
 export async function fetchHoldings<T>(
   userId: string,

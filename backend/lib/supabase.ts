@@ -167,6 +167,32 @@ export async function getTransactions(userId: string, accountId: string): Promis
   return (data ?? []) as TransactionRow[];
 }
 
+// --- Authorization ---
+
+type AuthorizationRow = {
+  authorization_id: string;
+  user_id: string;
+  is_disabled: boolean;
+  disabled_date: string | null;
+};
+
+export async function upsertAuthorizations(rows: AuthorizationRow[]): Promise<void> {
+  if (rows.length === 0) return;
+  const { error } = await supabaseServiceRoleClient
+    .from("user_authorizations")
+    .upsert(rows, { onConflict: "authorization_id" });
+  if (error) throw new Error(`Failed to upsert authorizations: ${error.message}`);
+}
+
+export async function getAuthorizations(userId: string): Promise<AuthorizationRow[]> {
+  const { data, error } = await supabaseServiceRoleClient
+    .from("user_authorizations")
+    .select("*")
+    .eq("user_id", userId);
+  if (error) throw new Error(`Failed to get authorizations: ${error.message}`);
+  return (data ?? []) as AuthorizationRow[];
+}
+
 // --- キャッシュ削除 ---
 
 // 特定の接続に紐づく口座（とそのcascade先）を削除
@@ -189,6 +215,12 @@ export async function deleteAllUserData(userId: string): Promise<void> {
     .delete()
     .eq("user_id", userId);
   if (accountsError) throw new Error(`Failed to delete accounts: ${accountsError.message}`);
+
+  const { error: authError } = await supabaseServiceRoleClient
+    .from("user_authorizations")
+    .delete()
+    .eq("user_id", userId);
+  if (authError) throw new Error(`Failed to delete user_authorizations: ${authError.message}`);
 
   const { error: secretError } = await supabaseServiceRoleClient
     .from("user_secrets")
